@@ -1,0 +1,48 @@
+version: "3.0"
+
+
+# list of services in the Docker
+services:
+  bk-services:
+    # container name this will be used as internal ip address
+    container_name: bk-services
+    # it will search for Blue docker file and make a build
+    build: .
+    # for docker debugging
+    stdin_open: true
+    tty: true
+
+    restart: always
+
+    # command to run the server
+    command: uvicorn main:app --host 0.0.0.0 --reload
+
+    # volumne mapping
+    volumes:
+      - .:/code
+    # passing ports from the .env
+    ports:
+      - '${FASTAPI_LOCAL_PORT}:${FASTAPI_DOCKER_PORT}'
+
+
+  # adminer-service:
+  #   container_name: adminer_service
+  #   image: adminer
+  #   restart: always
+  #   depends_on:
+  #     - bk-services
+  #   ports:
+  #     - "${ADMINER_LOCAL_PORT}:${ADMINER_DOCKER_PORT}"
+
+  # mssql-service:
+  #   container_name: mssql_service
+  #   # build: .
+  #   image: mcmoe/mssqldocker:v2017.CU24.0
+  #   environment:
+  #     ACCEPT_EULA: Y
+  #     SA_PASSWORD: ${SA_PASSWORD}
+  #     MSSQL_DB: ${MSSQL_DB}
+  #     MSSQL_USER: ${MSSQL_ROOT_USERNAME}
+  #     MSSQL_PASSWORD: ${MSSQL_ROOT_PASSWORD}
+  #   ports:
+  #     - "${MSSQL_LOCAL_PORT}:${MSSQL_DOCKER_PORT}"
